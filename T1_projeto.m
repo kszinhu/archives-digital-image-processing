@@ -1,3 +1,9 @@
+% ---
+% Course: Processamento Digital de Imagens
+% Student: Cassiano Henrique Aparecido Rodrigues
+% Activity: Primeiro Projeto - Filtragem e Métricas de Qualidade
+% ---
+
 clear all;
 clf;
 close all;
@@ -16,7 +22,7 @@ j_img_median = medfilt2(j_img);
 j_img_mean = imfilter(j_img, fspecial('average', 3));
 
 % 5 - Calculate ME, MAE, MSE, RMSE, NMSE, PSNR, COV, COR, JAC, SSIM metrics
-% 6 - Create table "Métricas" with all metrics with 
+% 6 - Create table "Métricas" with all metrics
 
 noise_max = 0.5; % 50%
 initial_noise = 0.05; % initial noise percentage
