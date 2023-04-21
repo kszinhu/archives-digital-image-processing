@@ -111,7 +111,7 @@ function [max_error] = maximum_error(img_f, img_g)
     max_error = 0;
     for i = 1:rows
         for j = 1:cols
-            error = cast(abs(img_f(i, j) - img_g(i, j)), "uint32");
+            error = cast(abs(img_f(i, j) - img_g(i, j)), "double");
             if error > max_error
                 max_error = error;
             end
