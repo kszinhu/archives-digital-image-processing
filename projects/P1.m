@@ -8,7 +8,7 @@ clear all;
 clf;
 close all;
 
-i_img = imread('cameraman.tif');
+i_img = imread('assets/cameraman.tif');
 
 % 2 - Copy image I to J
 j_img = i_img;
