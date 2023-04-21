@@ -26,7 +26,7 @@ index = 1;
 
 metrics_names = {'ME', 'MAE', 'MSE', 'RMSE', 'NMSE', 'PSNR', 'COV', 'COR', 'JAC', 'SSIM'};
 metrics_row_names = {};
-metrics_values = zeros(num_steps, length(metrics_names));
+metrics_values = zeros(num_steps, length(metrics_names), 2);
 
 % Apply metrics to matrics_values matrix
 for current_noise = initial_noise:noise_increment:noise_max
@@ -40,16 +40,26 @@ for current_noise = initial_noise:noise_increment:noise_max
     j_imgs_mean{index} = imfilter(j_img, fspecial('average', 3));
 
     % Calculate ME, MAE, MSE, RMSE, NMSE, PSNR, COV, COR, JAC, SSIM metrics    
-    metrics_values(index, 1) = maximum_error(i_img, j_img);
-    metrics_values(index, 2) = mean_error(i_img, j_img);
-    metrics_values(index, 3) = quadratic_mean_error(i_img, j_img);
-    metrics_values(index, 4) = root_quadratic_mean_error(i_img, j_img);
-    metrics_values(index, 5) = normalized_quadratic_mean_error(i_img, j_img);
-    metrics_values(index, 6) = peak_signal_noise_ratio(i_img, j_img);
-    metrics_values(index, 7) = covariance(i_img, j_img);
-    metrics_values(index, 8) = correlation(i_img, j_img);
-    metrics_values(index, 9) = jaccard(i_img, j_img);
-    metrics_values(index, 10) = structured_similarity_index(i_img, j_img, 0.03, 255);
+    metrics_values(index, 1, 1) = maximum_error(i_img, j_imgs_median{index});
+    metrics_values(index, 1, 1) = maximum_error(i_img, j_imgs_mean{index});
+    metrics_values(index, 2, 1) = mean_error(i_img, j_imgs_median{index});
+    metrics_values(index, 2, 2) = mean_error(i_img, j_imgs_mean{index});
+    metrics_values(index, 3, 1) = quadratic_mean_error(i_img, j_imgs_median{index});
+    metrics_values(index, 3, 2) = quadratic_mean_error(i_img, j_imgs_mean{index});
+    metrics_values(index, 4, 1) = root_quadratic_mean_error(i_img, j_imgs_median{index});
+    metrics_values(index, 4, 2) = root_quadratic_mean_error(i_img, j_imgs_mean{index});
+    metrics_values(index, 5, 1) = normalized_quadratic_mean_error(i_img, j_imgs_median{index});
+    metrics_values(index, 5, 2) = normalized_quadratic_mean_error(i_img, j_imgs_mean{index});
+    metrics_values(index, 6, 1) = peak_signal_noise_ratio(i_img, j_imgs_median{index});
+    metrics_values(index, 6, 2) = peak_signal_noise_ratio(i_img, j_imgs_mean{index});
+    metrics_values(index, 7, 1) = covariance(i_img, j_imgs_median{index});
+    metrics_values(index, 7, 2) = covariance(i_img, j_imgs_mean{index});
+    metrics_values(index, 8, 1) = correlation(i_img, j_imgs_median{index});
+    metrics_values(index, 8, 2) = correlation(i_img, j_imgs_mean{index});
+    metrics_values(index, 9, 1) = jaccard(i_img, j_imgs_median{index});
+    metrics_values(index, 9, 2) = jaccard(i_img, j_imgs_mean{index});
+    metrics_values(index, 10, 1) = structured_similarity_index(i_img, j_imgs_median{index}, 0.03, 255);
+    metrics_values(index, 10, 2) = structured_similarity_index(i_img, j_imgs_mean{index}, 0.03, 255);
     
     % Add current_noise to metrics_row_names and concatenate with "%"
     metrics_row_names{index} = strcat(num2str(current_noise * 100), '%');
@@ -57,13 +67,17 @@ for current_noise = initial_noise:noise_increment:noise_max
     index = index + 1;
 end
 
-metric_table = array2table(metrics_values, 'RowNames', metrics_row_names, 'VariableNames', metrics_names);
+metric_table_median = array2table(metrics_values(:, :, 1), 'VariableNames', metrics_names, 'RowNames', metrics_row_names);
+metric_table_mean = array2table(metrics_values(:, :, 2), 'VariableNames', metrics_names, 'RowNames', metrics_row_names);
 
 % 9 - Display list of imagens (i, j, j_median, j_mean) respective with all noises
 montage([i_imgs; j_imgs; j_imgs_median; j_imgs_mean], 'Size', [num_steps, 4]);
 
 % 10 - Display table
-disp(metric_table);
+disp('Métricas - Mediana');
+disp(metric_table_median);
+disp('Métricas - Média');
+disp(metric_table_mean);
 
 % 11 - Display on graph each metric with respect to the noise percentage
 figure;
@@ -71,8 +85,11 @@ tiledlayout(length(metrics_names)/2, 2);
 
 for i = 1:length(metrics_names)
     nexttile
-    plot(metrics_values(:, i));
-    title(metrics_names{i});
+    plot(metrics_values(:, i, 1));
+    hold on;
+    plot(metrics_values(:, i, 2));
+    legend('Mediana', 'Média');
+    title(metrics_names(i));
 end
 
 function [img] = salt_pepper_noise(img, noise_percent)
