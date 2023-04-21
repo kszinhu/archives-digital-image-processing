@@ -159,16 +159,15 @@ function [root_quad_mean_error] = root_quadratic_mean_error(img_f, img_g)
 end
 
 % Erro Médio Quadrático Normalizado (NMSE)
-% ! Check if correct
 function [norm_quad_mean_error] = normalized_quadratic_mean_error(img_f, img_g)
     [rows, cols] = size(img_f);
     sum_error = 0;
     sum_img1 = 0;
     for i = 1:rows
         for j = 1:cols
-            error = cast(abs(img_f(i, j) - img_g(i, j)), "uint32");
+            error = cast(img_f(i, j) - img_g(i, j), "double");
             sum_error = sum_error + error^2;
-            sum_img1 = cast(sum_img1 + img_f(i, j)^2, "double");
+            sum_img1 = sum_img1 + cast(img_f(i, j), "double")^2;
         end
     end
     norm_quad_mean_error = sum_error / sum_img1;
