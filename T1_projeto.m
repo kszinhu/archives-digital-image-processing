@@ -180,7 +180,7 @@ function [peak_signal_noise_ratio] = peak_signal_noise_ratio(img_f, img_g)
     sum_error = 0;
     for i = 1:rows
         for j = 1:cols
-            error = cast(abs(img_f(i, j) - img_g(i, j)), "uint32");
+            error = abs(cast(img_f(i, j) - img_g(i, j), "double"));
             sum_error = sum_error + error^2;
         end
     end
