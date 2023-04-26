@@ -14,5 +14,7 @@ Repositório contém as seguintes pastas e arquivos:
 # Atividades desenvolvidas
 
 - Projetos
+  + Projeto 1 - Filtragem e Métricas de Qualidade
+
 - Exercícios
 ```
