@@ -8,7 +8,7 @@ clear all;
 clf;
 close all;
 
-i_img = imread('assets/cameraman.tif');
+i_img = imread('../assets/cameraman.tif');
 
 % 2 - Copy image I to J
 j_img = i_img;
@@ -78,11 +78,6 @@ metric_table_mean = array2table(metrics_values(:, :, 2), 'VariableNames', metric
 
 % 9 - Display list of imagens (i, j, j_median, j_mean) respective with all noises
 montage([i_imgs; j_imgs; j_imgs_median; j_imgs_mean], 'Size', [num_steps, 4]);
-width_img = size(i_img, 2);
-tags = {'i', 'j_{noised}', 'j_{median}', 'j_{mean}'};
-for i = 1:length(tags)
-    text((i - 1) * width_img - (length(tags{i}) * 12) + width_img/2, 1, tags{i}, 'Color', 'red', 'FontSize', 12);
-end
 
 % 10 - Display table
 disp('Métricas - Mediana');

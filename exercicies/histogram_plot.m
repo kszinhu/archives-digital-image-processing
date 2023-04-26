@@ -2,7 +2,7 @@ clear all;
 clf;
 close all;
 
-img = imread('assets/cameraman.tif');
+img = imread('../assets/cameraman.tif');
 
 [h, l] = size(img);
 
