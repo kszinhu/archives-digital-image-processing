@@ -215,18 +215,14 @@ function [correlation] = correlation(img_f, img_g)
     mi_g = mean(img_g, 'all'); % nível médio de cinza da imagem g
 
     [rows, cols] = size(img_f);
-    sum_error = 0;
-    sum_error_f = 0;
-    sum_error_g = 0;
-    for i = 1:rows
-        for j = 1:cols
-            error = cast((img_f(i, j) - mi_f) * (img_g(i, j) - mi_g), "double");
-            sum_error = sum_error + error;
-            sum_error_f = cast(sum_error_f + (img_f(i, j) - mi_f)^2, "double");
-            sum_error_g = cast(sum_error_g + (img_g(i, j) - mi_g)^2, "double");
-        end
-    end
-    correlation = cast(sum_error / sqrt(sum_error_f * sum_error_g), "double");
+ 
+    % Calcula o desvio padrão das imagens
+    std_f = std2(img_f);
+    std_g = std2(img_g);
+
+    cov = covariance(img_f, img_g);
+
+    correlation = cov / (std_f * std_g);
 end
 
 % Coeficiente de Jaccard (JAC)
