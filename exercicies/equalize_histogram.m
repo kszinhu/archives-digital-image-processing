@@ -20,7 +20,7 @@ cdf = cumsum(histograma);
 cdf = cdf / numel(img_a);
 
 % 4. Calcular os novos níveis de intensidade
-novos_niveis = round(cdf * 9);
+novos_niveis = ceil(cdf * 9);
 
 T = zeros(1, 10);
 for i = 1:10
@@ -56,7 +56,7 @@ title('Histograma da imagem equalizada');
   
 % 9. Mostrar a função de transformação T
 figure;
-plot(T);
+plot(0:9, T);
 title('Função de transformação T');
 xlabel('Níveis de intensidade originais');
 ylabel('Novos níveis de intensidade');
