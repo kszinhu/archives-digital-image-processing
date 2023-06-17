@@ -1,16 +1,32 @@
-# Face recognition
+# CLI Face Recognition
+
+Command line tool for face recognition using some descriptors (algorithm or deep learning), and some metrics to evaluate the results.
 
 ## About
 
-Para este projeto você deve utilizar pelo menos dois descritores de faces, sendo um
-deles o LBP (Local Binary Pattern), denominado D1, e o segundo um descritor baseado
-preferencialmente em aprendizado profundo (deep features), denominado D2;
+This project was developed as second project of the discipline of Digital Image Processing of the Computer Science course at the State University of São Paulo (UNESP) - Bauru
 
-Os descritores de face D1 e D2 deverão ser aplicados sobre duas bases de dados de
-faces disponíveis publicamente, ARFACE e FRGC, utilizando-se o mesmo protocolo
-experimental para cada base de dados;
+### Description
 
-Os desempenhos dos descritores D1 e D2 deverão ser avaliados e comparados nos
-modos de operação de Autenticação (1:1) e de Identificação (1:n), utilizando-se métricas
-comumente adotadas na área de Biometria, tais como: curvas ROC, EER, FAR, FRR, F-
-Score, curvas CMC e AUC (Area Under Curve);
+Minimum requirements:
+
+- 2 descriptors (LBP and any other using deep features)
+- 1 database (ARFACE or FRGC)
+- Comparison between descriptors
+- Metrics: ROC curves, EER, FAR, FRR, F-Score, CMC curves and AUC (Area Under Curve)
+
+Performance evaluation: Authentication (1:1) and Identification (1:n)
+
+### How to run
+
+1. Clone this repository
+2. Run `pipenv install` to install dependencies
+3. Run `pipenv shell` to activate virtual environment
+
+## Usage
+
+Use the following command to check the usage of the tool:
+
+```bash
+python -m face_recognition --help
+```
