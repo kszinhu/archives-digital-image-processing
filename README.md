@@ -15,6 +15,7 @@ Repositório contém as seguintes pastas e arquivos:
 
 - Projetos
   + Projeto 1 - Filtragem e Métricas de Qualidade
+  + Projeto 2 - Reconhecimento (identificação e autenticação) de faces e cálculo de métricas biométricas
 
 - Exercícios
 ```
