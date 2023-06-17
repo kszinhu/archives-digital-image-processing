@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+typer = "*"
+colorama = "*"
+opencv-contrib-python = "*"
+numpy = "*"
+matplotlib = "*"
+scikit-image = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.3"
