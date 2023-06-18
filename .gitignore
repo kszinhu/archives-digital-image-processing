@@ -1,2 +1,5 @@
 # Vscode
 .vscode
+
+# any folder with _database suffix
+*_database
