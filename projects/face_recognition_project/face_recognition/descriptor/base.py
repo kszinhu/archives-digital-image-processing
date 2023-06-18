@@ -1,8 +1,12 @@
-class Descriptor():
-    _name: str | None = None
-    _default_params: dict | None = None
+from abc import ABC as Metaclass, abstractmethod
+from typing import Any, Dict
 
-    def __init__(self, overlapParams: dict | None = None):
+class Descriptor(Metaclass):
+    _name: str | None = None
+    _default_params: Dict[str, Any] | None = None
+    _params: Dict[str, Any] | None = None
+
+    def __init__(self, overlapParams: Dict[str, Any] | None = None):
         self._params = overlapParams or self._default_params
         
         if self._params is None:
@@ -14,6 +18,7 @@ class Descriptor():
         if cls._default_params is None:
             raise NotImplementedError(f'{cls.__name__} must implement the _default_params class attribute.')
 
+    @abstractmethod
     def describe(self, image):
         raise NotImplementedError()
     

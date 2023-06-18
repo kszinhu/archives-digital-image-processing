@@ -21,16 +21,16 @@ ERRORS = {
 }
 
 MESSAGES_TYPES = {
-    'SUCCESS': {
-        'message': 'SUCCESS',
-        'color': colors.GREEN,
+    "SUCCESS": {
+        "message": "SUCCESS",
+        "color": colors.GREEN,
     },
-    'ERROR': {
-        'message': "ERROR",
-        'color': colors.RED,
+    "ERROR": {
+        "message": "ERROR",
+        "color": colors.RED,
     },
-    'INFO': {
-        'message': "INFO",
-        'color': colors.BLUE,
-    }
+    "INFO": {
+        "message": "INFO",
+        "color": colors.BLUE,
+    },
 }
