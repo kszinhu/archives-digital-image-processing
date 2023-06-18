@@ -1,17 +1,62 @@
 from face_recognition import __app_name__, __version__, ERRORS, config, database
 from .utils import secho, parser_additional_params
 from .dataset.handler import load_dataset
-from .database import write_to_database
+from .descriptor.handler import load_descriptor
+from .database import write_to_database, read_from_database
 
 from pathlib import Path
 from typing import Optional, List, Dict
 from torch.cuda import is_available
 
+import matplotlib.pyplot as plt
 import typer
 
-import pdb
-
 app = typer.Typer()
+
+
+# * Use descriptor
+# python -m face_recognition describe -n LBP -d ATT_FACES R=15,P=0.8
+@app.command()
+def describe(
+    name: str = typer.Option(..., "--name", "-n", prompt="Please enter descriptor name", help="Set descriptor name."),
+    dataset: str = typer.Option(..., "--dataset", "-d", prompt="Please enter dataset name", help="Set dataset name."),
+    plot: bool = typer.Option(False, "--plot", "-p", prompt="Please plot the descriptor", help="Plot the descriptor."),
+    descriptor_params: Dict[str, str] = typer.Argument(
+        None, help="Descriptor parameters.", parser=parser_additional_params
+    ),
+) -> None:
+    try:
+        datasets_config = read_from_database("dataset")
+        if datasets_config is None:
+            secho(f"No dataset configs found. Please set least one dataset first.", err=True, message_type="ERROR")
+            raise typer.Exit(code=1)
+
+        dataset_config = [dataset_config for dataset_config in datasets_config if dataset_config["name"] == dataset]
+        if len(dataset_config) == 0:
+            secho(
+                f"No dataset found with name {dataset}. Please set this dataset first.", err=True, message_type="ERROR"
+            )
+            raise typer.Exit(code=1)
+
+        dataset_config = dataset_config[0]
+        loaded_dataset = load_dataset(dataset, dataset_config["path"], kwargs=dataset_config["params"])
+    except Exception as error:
+        secho(f"Loading dataset failed with: {error}", message_type="ERROR", err=True)
+        raise typer.Exit(code=1)
+
+    # Load descriptor using descriptor name
+    try:
+        loaded_descriptor = load_descriptor(name, loaded_dataset, kwargs=descriptor_params)
+
+        for feature, _label in loaded_descriptor.describe():
+            if plot:
+                plt.figure(figsize=(10, 10))
+                plt.imshow(feature, cmap="gray")
+                plt.show()
+
+    except Exception as error:
+        secho(f"Loading descriptor failed with: {error}", message_type="ERROR", err=True)
+        raise typer.Exit(code=1)
 
 
 # * Set dataset path
@@ -25,7 +70,6 @@ def dataset(
     ),
 ) -> None:
     """Set dataset path."""
-    pdb.set_trace()
     try:
         loaded_dataset = (
             load_dataset(type, path, kwargs=dataset_params) if dataset_params is not None else load_dataset(type, path)
@@ -41,9 +85,13 @@ def dataset(
             params = dataset_params if dataset_params is not None else {}
             write_to_database(
                 {
-                    "dataset": loaded_dataset.name,
-                    "dataset_path": str(path.absolute()),
-                    "dataset_params": params,
+                    "dataset": [
+                        {
+                            "name": loaded_dataset.name,
+                            "path": str(path.absolute()),
+                            "params": params,
+                        }
+                    ]
                 }  # type: ignore
             )
     except Exception as error:
