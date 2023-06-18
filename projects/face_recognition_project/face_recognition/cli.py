@@ -39,7 +39,7 @@ def describe(
             raise typer.Exit(code=1)
 
         dataset_config = dataset_config[0]
-        loaded_dataset = load_dataset(dataset, dataset_config["path"], kwargs=dataset_config["params"])
+        loaded_dataset = load_dataset(dataset, dataset_config["path"], **dataset_config["params"])
     except Exception as error:
         secho(f"Loading dataset failed with: {error}", message_type="ERROR", err=True)
         raise typer.Exit(code=1)
@@ -50,9 +50,11 @@ def describe(
 
         for feature, _label in loaded_descriptor.describe():
             if plot:
-                plt.figure(figsize=(10, 10))
+                plt.figure(figsize=(5, 5))
                 plt.imshow(feature, cmap="gray")
                 plt.show()
+
+        secho(f"finished", message_type="SUCCESS", bold=True)
 
     except Exception as error:
         secho(f"Loading descriptor failed with: {error}", message_type="ERROR", err=True)

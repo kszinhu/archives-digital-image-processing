@@ -24,7 +24,7 @@ class Descriptor(Metaclass):
             raise NotImplementedError(f"{cls.__name__} must implement the _default_params class attribute.")
 
     @abstractmethod
-    def describe(self) -> Generator[Tuple[Any, Dict[str, Any]], None, None]:
+    def describe(self, length: int | None = None) -> Generator[Tuple[Any, Dict[str, Any]], None, None]:
         """Describe dataset."""
         raise NotImplementedError
 

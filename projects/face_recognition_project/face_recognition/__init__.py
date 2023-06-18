@@ -1,5 +1,9 @@
 from typer import colors
 
+import matplotlib
+
+matplotlib.use("qt5agg")
+
 __app_name__ = "face-recognition"
 __version__ = "0.0.1"
 

@@ -2,6 +2,8 @@ from typing import Tuple, Any, Dict, Optional, List
 from pathlib import Path
 from abc import ABC as Metaclass, abstractmethod
 
+import pdb
+
 
 class Dataset(Metaclass):
     name: Optional[str] = None
@@ -9,8 +11,8 @@ class Dataset(Metaclass):
     _params: Optional[Dict[str, Any]] = None
     _database_path: Optional[Path] = None
 
-    def __init__(self, database_path: str, params: Dict[str, Any]):
-        self._params = params
+    def __init__(self, database_path: Path, **kwargs: Dict[str, Any]):
+        self._params = kwargs
         self._database_path = Path(database_path)
 
     def __init_subclass__(cls) -> None:
@@ -32,4 +34,4 @@ class Dataset(Metaclass):
         """
         Get all the images from the dataset path and return a list of images with their labels
         """
-        pass
+        raise NotImplementedError()

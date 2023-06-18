@@ -8,6 +8,9 @@ from skimage.feature import local_binary_pattern
 from skimage.io import imread
 
 
+import pdb
+
+
 class LBPDescriptor(Descriptor):
     _name = "LBP"
     _default_params = DESCRIPTORS_PARAMS[_name]
@@ -26,14 +29,18 @@ class LBPDescriptor(Descriptor):
     def _format_params(self, params: Dict[str, Any]) -> Dict[str, Any] | None:
         return {"R": params["radius"], "P": params["neighbors"]}
 
-    def describe(self) -> Generator[Tuple[Any, Dict[str, Any]], None, None]:
+    def describe(self, length: int | None = None) -> Generator[Tuple[Any, Dict[str, Any]], None, None]:
         if self._params is None or self._dataset is None:
             raise ValueError(
                 f"Invalid parameters or dataset for {self.__class__.__name__}.\n {self._params} \n {self._dataset}"
             )
 
+        default_dataset_length = self._dataset._params.get("length", "1") if self._dataset._params else "1"
+        length = length if length is not None else int(default_dataset_length)
+
         images = self._dataset.load_dataset()
-        for image in images:
+
+        for image in images[:length]:
             features, label = self._describe_image(image)
             yield features, label
 

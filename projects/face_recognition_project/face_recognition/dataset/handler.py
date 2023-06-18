@@ -5,6 +5,8 @@ from face_recognition.utils import secho
 from typing import Dict
 from pathlib import Path
 
+import pdb
+
 
 def load_dataset(dataset_name: str, dataset_path: Path, **kwargs: Dict[str, str]) -> Dataset:
     enabled_datasets_names = [dataset["name"] for dataset in ENABLED_DATASETS]
@@ -16,4 +18,4 @@ def load_dataset(dataset_name: str, dataset_path: Path, **kwargs: Dict[str, str]
     SelectedDataset = DATASET_CLASSES[dataset_name]
 
     secho(f"Loading dataset {dataset_name}...", message_type="INFO")
-    return SelectedDataset(dataset_path, params={**kwargs})
+    return SelectedDataset(dataset_path, **kwargs)

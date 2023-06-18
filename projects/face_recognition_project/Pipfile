@@ -10,6 +10,7 @@ opencv-contrib-python = "*"
 numpy = "*"
 matplotlib = "*"
 scikit-image = "*"
+pyqt5 = "*"
 
 [dev-packages]
 black = "*"
