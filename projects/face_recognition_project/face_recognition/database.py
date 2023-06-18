@@ -2,6 +2,7 @@ from face_recognition import DB_WRITE_ERROR, SOMETHING_BROKE_ERROR, SUCCESS
 from .config import CONFIG_FILE_PATH
 
 from json import loads, dumps
+from typer import confirm
 from typing import Dict
 from pathlib import Path
 
@@ -19,6 +20,9 @@ def get_database_path(config_file: Path) -> Path:
 def init_database(db_path: Path) -> int:
     """Create face-recognition database."""
     try:
+        if db_path.exists():
+            if not confirm(f'Database path "{db_path}" already exists. Do you want to overwrite it?', default=False):
+                return SUCCESS
         db_path.write_text("{}")
     except OSError:
         return DB_WRITE_ERROR
@@ -26,7 +30,7 @@ def init_database(db_path: Path) -> int:
     return SUCCESS
 
 
-def write_to_database(data: Dict[str, str]) -> int:
+def write_to_database(data: Dict[str, str] | Dict[str, Dict[str, str]]) -> int:
     """Write data to database."""
     db_path = get_database_path(config_file=CONFIG_FILE_PATH)
     try:

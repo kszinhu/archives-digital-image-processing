@@ -1,30 +1,35 @@
 from face_recognition import __app_name__, __version__, ERRORS, config, database
-from .utils import secho
+from .utils import secho, parser_additional_params
 from .dataset.handler import load_dataset
 from .database import write_to_database
 
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Dict
 from torch.cuda import is_available
 
 import typer
+
+import pdb
 
 app = typer.Typer()
 
 
 # * Set dataset path
-# python -m face_recognition -d ATT_FACES -p /home/username/datasets/att_faces --min-samples 15
+# python -m face_recognition dataset -d ATT_FACES -p /home/username/datasets/att_faces min-samples=15,train-size=0.8
 @app.command()
 def dataset(
-    type: str = typer.Option(..., "--type", "-t", help="Set dataset type."),
-    path: Path = typer.Option(..., "--path", "-p", help="Set dataset path."),
-    dataset_params: Optional[List[str]] = typer.Option(
-        None, "--additional-params", "-a", help="Set additional dataset parameters."
+    type: str = typer.Option(..., "--type", "-t", prompt="Please enter dataset type", help="Set dataset type."),
+    path: Path = typer.Option(..., "--path", "-p", prompt="Please enter dataset path", help="Set dataset path."),
+    dataset_params: Optional[Dict[str, str]] = typer.Argument(
+        None, help="Dataset parameters.", parser=parser_additional_params
     ),
 ) -> None:
     """Set dataset path."""
+    pdb.set_trace()
     try:
-        loaded_dataset = load_dataset(type, path, *dataset_params) if dataset_params else load_dataset(type, path)
+        loaded_dataset = (
+            load_dataset(type, path, kwargs=dataset_params) if dataset_params is not None else load_dataset(type, path)
+        )
     except Exception as error:
         secho(f"Loading dataset failed with: {error}", message_type="ERROR", err=True)
         raise typer.Exit(code=1)
@@ -33,7 +38,14 @@ def dataset(
 
     try:
         if loaded_dataset.name is not None and path is not None:
-            write_to_database({"dataset": loaded_dataset.name, "dataset_path": str(path.absolute())})
+            params = dataset_params if dataset_params is not None else {}
+            write_to_database(
+                {
+                    "dataset": loaded_dataset.name,
+                    "dataset_path": str(path.absolute()),
+                    "dataset_params": params,
+                }  # type: ignore
+            )
     except Exception as error:
         secho(f"Writing to config file failed with: {error}", message_type="ERROR", err=True)
         raise typer.Exit(code=1)

@@ -35,11 +35,9 @@ def _create_database(db_path: str) -> int:
     config_parser = configparser.ConfigParser()
     config_parser["General"] = {"database": db_path}
     try:
-        if Path(db_path).exists():
-            if not confirm(f'Database path "{db_path}" already exists. Do you want to overwrite it?', default=False):
-                return SUCCESS
-        with CONFIG_FILE_PATH.open("w") as file:
-            config_parser.write(file)
+        if not Path(db_path).exists():
+            with CONFIG_FILE_PATH.open("w") as file:
+                config_parser.write(file)
     except OSError:
         return DB_WRITE_ERROR
     return SUCCESS

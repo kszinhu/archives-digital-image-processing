@@ -1,5 +1,7 @@
-from typer import echo, style, colors
 from face_recognition import MESSAGES_TYPES
+
+from typing import Dict
+from typer import echo, style, colors
 
 
 def secho(
@@ -19,3 +21,8 @@ def secho(
     provided_message = style(message, fg=colors.WHITE, bold=bold)
 
     echo(f"{message_start} - {provided_message}", nl=nl, err=err, *args, **kwargs)
+
+
+def parser_additional_params(string: str) -> Dict[str, str]:
+    """Parse string to dictionary."""
+    return dict(item.split("=") for item in string.split(","))
