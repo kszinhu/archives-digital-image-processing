@@ -2,8 +2,9 @@ from face_recognition.dataset import Dataset
 from .config import DESCRIPTORS_PARAMS
 from .base import Descriptor
 
-from pathlib import Path
 from typing import Any, Dict, Tuple, Generator
+from pathlib import Path
+from numpy import ndarray
 from skimage.feature import local_binary_pattern
 from skimage.io import imread
 
@@ -29,7 +30,7 @@ class LBPDescriptor(Descriptor):
     def _format_params(self, params: Dict[str, Any]) -> Dict[str, Any] | None:
         return {"R": params["radius"], "P": params["neighbors"]}
 
-    def describe(self, length: int | None = None) -> Generator[Tuple[Any, Dict[str, Any]], None, None]:
+    def describe(self, length: int | None = None) -> Generator[Tuple[Any, ndarray, int], None, None]:
         if self._params is None or self._dataset is None:
             raise ValueError(
                 f"Invalid parameters or dataset for {self.__class__.__name__}.\n {self._params} \n {self._dataset}"
@@ -41,10 +42,10 @@ class LBPDescriptor(Descriptor):
         images = self._dataset.load_dataset()
 
         for image in images[:length]:
-            features, label = self._describe_image(image)
-            yield features, label
+            readable_image, features, label = self._describe_image(image)
+            yield readable_image, features, label
 
-    def _describe_image(self, image: Tuple[Path, Dict[str, Any]]):
+    def _describe_image(self, image: Tuple[Path, int]) -> Tuple[Any, ndarray, int]:
         if self._params is None:
             raise ValueError(f"No parameters set for {self.__class__.__name__}.\n {self._params}")
 
@@ -53,4 +54,4 @@ class LBPDescriptor(Descriptor):
         readable_image = imread(image_path)
         features = local_binary_pattern(readable_image, **self._params)
 
-        return features, label
+        return readable_image, features, label

@@ -1,13 +1,15 @@
 from typing import Tuple, Any, Dict, Optional, List
 from pathlib import Path
+from numpy import ndarray
 from abc import ABC as Metaclass, abstractmethod
 
 import pdb
 
 
 class Dataset(Metaclass):
-    name: Optional[str] = None
-    _file_extension: Optional[str] = None
+    name: str = None  # type: ignore (abstract class)
+    _loaded_dataset: List[Tuple[Path, int]] = None  # type: ignore (abstract class)
+    _file_extension: str = None  # type: ignore (abstract class)
     _params: Optional[Dict[str, Any]] = None
     _database_path: Optional[Path] = None
 
@@ -30,8 +32,15 @@ class Dataset(Metaclass):
         raise NotImplementedError()
 
     @abstractmethod
-    def load_dataset(self) -> List[Tuple[Path, Dict[str, Any]]]:
+    def load_dataset(self) -> List[Tuple[Path, int]]:
         """
         Get all the images from the dataset path and return a list of images with their labels
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def splitter(self, random_state: int, test_size=0.2, **kwargs: Dict[str, Any]):
+        """
+        Split the data into training and test sets
         """
         raise NotImplementedError()

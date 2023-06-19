@@ -6,10 +6,12 @@ name = "pypi"
 [packages]
 typer = "*"
 colorama = "*"
-opencv-contrib-python = "*"
 numpy = "*"
 matplotlib = "*"
 scikit-image = "*"
+sklearn = "*"
+scikit-learn = "*"
+opencv-contrib-python-headless = "*"
 pyqt5 = "*"
 
 [dev-packages]

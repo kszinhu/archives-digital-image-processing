@@ -1,7 +1,9 @@
 from .base import Descriptor
 from .lbp import LBPDescriptor
 
+
 from typing import Dict, Type
+
 
 DESCRIPTORS = {
     "LBP": {

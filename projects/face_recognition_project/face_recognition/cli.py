@@ -2,6 +2,7 @@ from face_recognition import __app_name__, __version__, ERRORS, config, database
 from .utils import secho, parser_additional_params
 from .dataset.handler import load_dataset
 from .descriptor.handler import load_descriptor
+from .recognition.handler import load_recognizer
 from .database import write_to_database, read_from_database
 
 from pathlib import Path
@@ -10,8 +11,50 @@ from torch.cuda import is_available
 
 import matplotlib.pyplot as plt
 import typer
+import pdb
 
 app = typer.Typer()
+
+
+# * Recognize
+# python -m face_recognition recognize -d LBP -dt ATT_FACES min-samples=15,train-size=0.8
+@app.command()
+def recognize(
+    recognizer: str = typer.Option(
+        ..., "--descriptor", "-d", prompt="Please enter descriptor name", help="Set descriptor name."
+    ),
+    dataset: str = typer.Option(..., "--dataset", "-dt", prompt="Please enter dataset name", help="Set dataset name."),
+    additional_params: Dict[str, str] = typer.Argument(
+        None, help="Additional parameters.", parser=parser_additional_params
+    ),
+) -> None:
+    try:
+        datasets_config = read_from_database("dataset")
+        if datasets_config is None:
+            secho(f"No dataset configs found. Please set least one dataset first.", err=True, message_type="ERROR")
+            raise typer.Exit(code=1)
+
+        dataset_config = [dataset_config for dataset_config in datasets_config if dataset_config["name"] == dataset]
+        if len(dataset_config) == 0:
+            secho(
+                f"No dataset found with name {dataset}. Please set this dataset first.", err=True, message_type="ERROR"
+            )
+            raise typer.Exit(code=1)
+
+        dataset_config = dataset_config[0]
+        loaded_dataset = load_dataset(dataset, dataset_config["path"], **dataset_config["params"])
+    except Exception as e:
+        secho(f"Error while loading dataset: {e}", err=True, message_type="ERROR")
+        raise typer.Exit(code=1)
+
+    try:
+        loaded_recognizer = load_recognizer(recognizer, loaded_dataset, kwargs=additional_params)
+
+        a = loaded_recognizer.evaluate()
+        pdb.set_trace()
+    except Exception as error:
+        secho(f"Error while loading recognizer: {error}", err=True, message_type="ERROR")
+        raise typer.Exit(code=1)
 
 
 # * Use descriptor
@@ -48,7 +91,7 @@ def describe(
     try:
         loaded_descriptor = load_descriptor(name, loaded_dataset, kwargs=descriptor_params)
 
-        for feature, _label in loaded_descriptor.describe():
+        for _image, feature, _label in loaded_descriptor.describe():
             if plot:
                 plt.figure(figsize=(5, 5))
                 plt.imshow(feature, cmap="gray")
