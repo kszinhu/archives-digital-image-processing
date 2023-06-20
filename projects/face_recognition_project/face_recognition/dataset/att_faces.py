@@ -4,7 +4,7 @@ from face_recognition.utils import secho
 from typing import List, Tuple, Dict, Any
 from sklearn.model_selection import train_test_split
 from skimage.io import imread
-from numpy import unique, array, random, isin, concatenate
+from numpy import ndarray, unique, array, random, isin, concatenate
 from pathlib import Path
 from re import match
 
@@ -30,6 +30,10 @@ class AttFacesDataset(Dataset):
         person_id, variant_id = matched.group("person_id"), matched.group("variant_id")
 
         return {"person_id": person_id, "variant_id": variant_id}
+
+    def pre_processing(self, Debug=False) -> List[Tuple[ndarray, int]]:
+        """Att faces dataset pre processing"""
+        return super().pre_processing(Debug)
 
     def load_dataset(self) -> List[Tuple[Path, int]]:
         if (self._database_path is None) or (not self._database_path.exists()):
@@ -87,7 +91,7 @@ class AttFacesDataset(Dataset):
             "test_size": self._params.get("test_size", test_size),
         }
 
-        x_train, x_test, y_train, y_test = train_test_split(images, labels, **compound_args) if not split_only_test else train_test_split(splitted_images_test, splitted_labels_test, **compound_args)  # type: ignore
+        x_train, x_test, y_train, y_test = train_test_split(images, labels, **compound_args) if not split_only_test else train_test_split(splitted_images, splitted_labels_test, **compound_args)  # type: ignore
 
         if split_only_test:
             # concatenate the out of train images with the test images and labels

@@ -25,6 +25,13 @@ class Dataset(Metaclass):
             raise NotImplementedError(f"{cls.__name__} must implement the _file_extension class attribute.")
 
     @abstractmethod
+    def pre_processing(self, Debug=False) -> List[Tuple[ndarray, int]]:
+        """
+        Pre processing and align dataset for face recognition
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
     def recognition(self, image_file: str) -> Dict[str, Any]:
         """
         Face recognition on the dataset for the creation of the associated label

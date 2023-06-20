@@ -5,5 +5,8 @@
 __pycache__/
 
 
+# zip files
+*.zip
+
 # any folder with _database suffix
 *_database
