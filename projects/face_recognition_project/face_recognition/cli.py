@@ -50,8 +50,8 @@ def recognize(
     try:
         loaded_recognizer = load_recognizer(recognizer, loaded_dataset, kwargs=additional_params)
 
-        a = loaded_recognizer.evaluate()
-        pdb.set_trace()
+        mean_metrics = loaded_recognizer.evaluate()
+        secho(f"Mean metrics: {mean_metrics}", message_type="INFO")
     except Exception as error:
         secho(f"Error while loading recognizer: {error}", err=True, message_type="ERROR")
         raise typer.Exit(code=1)

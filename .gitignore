@@ -1,5 +1,9 @@
 # Vscode
 .vscode
 
+# Python
+__pycache__/
+
+
 # any folder with _database suffix
 *_database

@@ -55,11 +55,11 @@ class Recognizer(Metaclass):
         """
         raise NotImplementedError()
 
-    def _extract(self, random_state: int) -> List[Tuple[ndarray, ndarray, Any, Any]]:
+    def _extract(self, random_state: int, split_only_test: bool = True) -> List[Tuple[ndarray, ndarray, Any, Any]]:
         """
         Extract the data from the dataset
         """
         if (self.__dataset is None) or (not isinstance(self.__dataset, Dataset)):
             raise ValueError("Invalid dataset")
 
-        return self.__dataset.splitter(random_state=random_state, **self.__params)
+        return self.__dataset.splitter(random_state=random_state, split_only_test=split_only_test, **self.__params)

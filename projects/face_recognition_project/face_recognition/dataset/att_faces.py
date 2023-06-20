@@ -4,7 +4,7 @@ from face_recognition.utils import secho
 from typing import List, Tuple, Dict, Any
 from sklearn.model_selection import train_test_split
 from skimage.io import imread
-from numpy import unique, array
+from numpy import unique, array, random, isin, concatenate
 from pathlib import Path
 from re import match
 
@@ -50,7 +50,7 @@ class AttFacesDataset(Dataset):
         self._loaded_dataset = images_recognized
         return list(images_recognized)
 
-    def splitter(self, random_state: int, test_size=0.2, **kwargs: Dict[str, Any]):
+    def splitter(self, random_state: int, test_size=0.2, split_only_test: bool = True, **kwargs: Dict[str, Any]):
         if (self._database_path is None) or (not self._database_path.exists()):
             secho(f"Invalid database path: {self._database_path}", message_type="ERROR")
             raise ValueError(f"Invalid database path: {self._database_path}")
@@ -60,13 +60,38 @@ class AttFacesDataset(Dataset):
 
         images, labels = zip(*self.load_dataset()) if self._loaded_dataset is None else zip(*self._loaded_dataset)
         images = array([imread(image_path) for image_path in images])
+        images.reshape(images.shape[0:])
         labels = array(labels)
 
+        unique_labels = unique(labels)
+
+        if split_only_test:
+            # Get some random labels to be used as test labels and remove them from the images and labels
+            out_of_train_labels_unique = random.choice(
+                unique_labels, size=int(len(unique_labels) * test_size / 2), replace=False
+            )
+            out_of_train_labels_unique = array(out_of_train_labels_unique)
+
+            # Get the images and labels should not be used for training and remove them from the images and labels
+            splitted_images = array(images[~isin(labels, out_of_train_labels_unique)])
+            splitted_images_test = array(images[isin(labels, out_of_train_labels_unique)])
+            splitted_labels = array(labels[~isin(labels, out_of_train_labels_unique)])
+            splitted_labels_test = array(labels[isin(labels, out_of_train_labels_unique)])
+
+            secho(f"Gathering {len(out_of_train_labels_unique)} images out of training set", message_type="INFO")
+            secho(f"Images out of train set [identifier]: {out_of_train_labels_unique}", message_type="INFO")
+
         compound_args = {
+            "stratify": labels if not split_only_test else splitted_labels,  # type: ignore
             "random_state": random_state,
             "test_size": self._params.get("test_size", test_size),
         }
 
-        # TODO: check if train and test return same person_id
+        x_train, x_test, y_train, y_test = train_test_split(images, labels, **compound_args) if not split_only_test else train_test_split(splitted_images_test, splitted_labels_test, **compound_args)  # type: ignore
 
-        return train_test_split(images, labels, **compound_args)
+        if split_only_test:
+            # concatenate the out of train images with the test images and labels
+            x_test = concatenate((x_test, splitted_images_test))  # type: ignore
+            y_test = concatenate((y_test, splitted_labels_test))  # type: ignore
+
+        return (x_train, x_test, y_train, y_test, out_of_train_labels_unique) if split_only_test else (x_train, x_test, y_train, y_test)  # type: ignore

@@ -39,7 +39,7 @@ class Dataset(Metaclass):
         raise NotImplementedError()
 
     @abstractmethod
-    def splitter(self, random_state: int, test_size=0.2, **kwargs: Dict[str, Any]):
+    def splitter(self, random_state: int, test_size=0.2, split_only_test: bool = True, **kwargs: Dict[str, Any]):
         """
         Split the data into training and test sets
         """

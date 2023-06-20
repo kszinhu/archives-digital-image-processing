@@ -1,8 +1,8 @@
 from .base import Recognizer
-
+from face_recognition.utils import secho
 
 from typing import Any, Dict
-from sklearn.metrics import f1_score, accuracy_score
+from sklearn.metrics import f1_score, accuracy_score, roc_curve, roc_auc_score
 from sklearn.preprocessing import LabelEncoder
 from skimage.io import imread
 from skimage.transform import resize
@@ -10,7 +10,6 @@ from numpy import array, random, dstack
 
 import matplotlib.pyplot as plt
 import cv2 as cv
-import pdb
 
 
 class LBPRecognizer(Recognizer):
@@ -40,7 +39,8 @@ class LBPRecognizer(Recognizer):
         labels = label_encoder.fit_transform(labels)
 
         for i in range(10):
-            x_train, x_test, y_train, y_test = self._extract(random_state=i)
+            secho(f"Training model with random state: {i}", message_type="INFO")
+            x_train, x_test, y_train, y_test = self._extract(random_state=i, split_only_test=False)
 
             self.train(x_train, y_train)
 
@@ -59,12 +59,12 @@ class LBPRecognizer(Recognizer):
                 readable_image = dstack([x_test[sample]] * 3)
                 readable_image = resize(readable_image, (250, 250))
 
-                predicted_name = label_encoder.inverse_transform([predictions[sample]])[0]
+                predicted_name = label_encoder.classes_[predictions[sample]]
                 real_name = label_encoder.classes_[y_test[sample]]
 
                 plt.title(f"Predicted: {predicted_name}, Actual: {real_name}")
                 plt.imshow(readable_image, cmap="gray")
-                plt.show()
+                plt.show(block=True)
 
         if save_model:
             """
