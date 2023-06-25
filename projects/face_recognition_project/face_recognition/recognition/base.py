@@ -49,7 +49,7 @@ class Recognizer(Metaclass):
             yield prediction, confidence
 
     @abstractmethod
-    def evaluate(self) -> Dict[str, Any]:
+    def evaluate(self, output: bool = True, save_model: bool = False) -> Dict[str, Any]:
         """
         Evaluate the model
         """

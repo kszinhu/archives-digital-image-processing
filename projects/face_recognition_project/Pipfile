@@ -13,6 +13,7 @@ sklearn = "*"
 scikit-learn = "*"
 opencv-contrib-python-headless = "*"
 pyqt5 = "*"
+tensorflow = "*"
 
 [dev-packages]
 black = "*"

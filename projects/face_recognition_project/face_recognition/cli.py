@@ -24,6 +24,9 @@ def recognize(
         ..., "--descriptor", "-d", prompt="Please enter descriptor name", help="Set descriptor name."
     ),
     dataset: str = typer.Option(..., "--dataset", "-dt", prompt="Please enter dataset name", help="Set dataset name."),
+    output: bool = typer.Option(
+        False, "--output", "-o", prompt="Please output the results", help="Output the results."
+    ),
     additional_params: Dict[str, str] = typer.Argument(
         None, help="Additional parameters.", parser=parser_additional_params
     ),
@@ -50,7 +53,7 @@ def recognize(
     try:
         loaded_recognizer = load_recognizer(recognizer, loaded_dataset, kwargs=additional_params)
 
-        mean_metrics = loaded_recognizer.evaluate()
+        mean_metrics = loaded_recognizer.evaluate(output=output)
         secho(f"Mean metrics: {mean_metrics}", message_type="INFO")
     except Exception as error:
         secho(f"Error while loading recognizer: {error}", err=True, message_type="ERROR")
