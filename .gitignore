@@ -1,5 +1,6 @@
 # Vscode
 .vscode
+*.code-workspace
 
 # Python
 __pycache__/
@@ -10,3 +11,6 @@ __pycache__/
 
 # any folder with _database suffix
 *_database
+
+# remove model plot
+*_model_plot.png
