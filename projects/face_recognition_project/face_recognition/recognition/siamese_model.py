@@ -110,7 +110,7 @@ class SiameseRecognizer(Recognizer):
 
     def train(self, x_train: Any, y_train: Any):
         pairs, labels = self.__create_pairs(x_train, y_train)
-        return self.__recognizer.fit([pairs[:, 0], pairs[:, 1]], labels, batch_size=256, epochs=20)
+        return self.__recognizer.fit([pairs[:, 0], pairs[:, 1]], labels, batch_size=32, epochs=100)
 
     def predict(self, x_test: Any, y_test: Any = None) -> Any:
         pairs, labels = self.__create_pairs(x_test, y_test)
